@@ -2230,10 +2230,10 @@ cyclist@~0.2.2:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
   integrity sha1-GzN5LhHpFKL9bW7WRHRkRE5fpkA=
 
-daisy-sdk@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/daisy-sdk/-/daisy-sdk-0.2.0.tgz#b117fc08c83cd07b44968a6115759ed6ced8e40c"
-  integrity sha512-zwh7w3V1SUnAJQxnkREiHj84cBrXxYEr52gpVVNY83CbyYSi/UpeKsystKmYcHjifJBKWzAa2KbvFzFi2boBrQ==
+daisy-sdk@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/daisy-sdk/-/daisy-sdk-0.2.1.tgz#e8e4151bdd7b61876653d61694567ee8f69baf41"
+  integrity sha512-OZSh7zSp4gyyuchWqsGigOzxk5gz2U9zGYkswaVZUy3uY8RztPIeZOAupemrapxutYzyO+tbhLRqiDSy87O/FA==
   dependencies:
     axios "^0.18.0"
     eth-sig-util "^2.1.2"
