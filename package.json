@@ -1,0 +1,60 @@
+{
+  "name": "@tokenfoundry/subscriptions-poc",
+  "version": "0.1.0",
+  "description": "POC",
+  "main": "server/index.js",
+  "author": "Patricio López Juri <patricio.juri@consensys.net> (https://lopezjuri.com)",
+  "license": "UNLICENSED",
+  "private": true,
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "nodemon --config nodemon.json",
+    "build": "next build ./client",
+    "start": "node server/index.js",
+    "lint": "eslint --cache --ext .js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@tokenfoundry/foundry-frontend": "^0.1.20",
+    "@tokenfoundry/react-metamask": "^0.2.0",
+    "axios": "^0.18.0",
+    "boom": "^7.2.2",
+    "config": "^3.1.0",
+    "daisy-sdk": "^0.2.0",
+    "dotenv": "^7.0.0",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-compose": "^4.1.0",
+    "koa-helmet": "^4.1.0",
+    "koa-logger": "^3.2.0",
+    "koa-mount": "^4.0.0",
+    "koa-nextjs": "^2.0.0",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.10.1",
+    "koa-static": "^5.0.0",
+    "lodash": "^4.17.11",
+    "lodash-id": "^0.14.0",
+    "lowdb": "^1.0.0",
+    "next": "^7.0.2",
+    "node-fetch": "^2.2.1",
+    "path-to-regexp": "^3.0.0",
+    "polished": "^3.2.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-media": "^1.8.0",
+    "styled-components": "^4.2.0",
+    "urijs": "^1.19.1",
+    "uuid": "^3.3.2",
+    "web3": "=1.0.0-beta.37",
+    "youch": "^2.0.10"
+  },
+  "devDependencies": {
+    "@tokenfoundry/eslint-config": "^1.6.3",
+    "babel-plugin-styled-components": "^1.10.0",
+    "eslint": "^5.16.0",
+    "nodemon": "^1.18.11"
+  }
+}

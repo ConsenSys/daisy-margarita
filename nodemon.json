@@ -1,0 +1,10 @@
+{
+  "exec": "node ./server/index.js",
+  "watch": [
+    "config",
+    "server",
+    ".env"
+  ],
+  "delay": "500",
+  "verbose": true
+}

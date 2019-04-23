@@ -1,0 +1,15 @@
+.vscode
+.env
+.git
+.gitignore
+.eslintrc.js
+.eslintignore
+.eslintcache
+jsconfig.json
+node_modules
+npm-debug.log
+docker-compose.yml
+db.json
+
+build-server
+build-client
