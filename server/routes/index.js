@@ -12,7 +12,7 @@ const {
 } = require("../middlewares/errors");
 
 module.exports = async function createDomains(globals) {
-  const { config, db } = globals;
+  const { config, db, pkg } = globals;
 
   const PROMO_CODE = "PROMO_CODE";
 
@@ -57,6 +57,10 @@ module.exports = async function createDomains(globals) {
       page: "index",
       props: {},
     });
+  });
+
+  router.get("/health", api, async ctx => {
+    ctx.body = pkg;
   });
 
   router.get("/about/", view, async ctx => {
