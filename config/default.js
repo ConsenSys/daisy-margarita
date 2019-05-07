@@ -37,8 +37,13 @@ module.exports = {
   renderer: {
     engine: "nextjs",
     options: {
-      dev: true,
-      dir: "./client", // relative to package.json root
+      dev: process.env.NODE_ENV !== "production",
+      quiet: true,
+      dir: path.join(__dirname, "..", "client"),
+      conf: {
+        distDir: "build-client", // relative to `options.dir`
+        useFileSystemPublicRoutes: false,
+      },
     },
   },
 

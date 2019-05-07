@@ -1,38 +1,27 @@
 /* eslint no-param-reassign:0 */
 
-const setupSSR = require("koa-nextjs");
+const RenderEngine = require("koa-nextjs");
 
 module.exports = async function setupRenderer(globals, app) {
   const { config } = globals;
 
-  switch (config.get("renderer.engine")) {
-    case "nextjs": {
-      await setupSSR(app, {
-        options: config.get("renderer.options"),
-      });
-      // TODO: improve koa-nextjs module
-      const old = app.context.render;
+  const engine = await RenderEngine.start({
+    options: config.get("renderer.options"),
+  });
 
-      app.context.render = function render({ page, props = {}, options }) {
-        const ctx = this;
+  // engine.router is an instance of `koa-router`
+  app.use(engine.router.routes());
 
-        // ctx.state.locals are implicit props.
-        return old.bind(ctx)({
-          page,
-          props: { ...props, ...ctx.state.locals },
-          options,
-        });
-      };
-      break;
-    }
-    case "debugger":
-    default: {
-      app.context.render = function rawRender(arg) {
-        const ctx = this;
-        ctx.body = arg;
-      };
-    }
-  }
+  app.context.render = async function render({ page, props = {}, options }) {
+    const ctx = this;
+
+    // ctx.state.locals are implicit props.
+    ctx.body = await engine.toHTML(ctx, {
+      page,
+      props: { ...props, ...ctx.state.locals },
+      options,
+    });
+  };
 
   const isDev = config.get("NODE_ENV") === "development";
 
