@@ -126,7 +126,7 @@ module.exports = async function createDomains(globals) {
 
   // GET /subscriptions/new/?plan=PLAN
   router.get("/subscriptions/new/", view, auth, async ctx => {
-    const { plans } = await subscriptionService.getPlans();
+    const { plans } = await subscriptionService.getData();
     const plan = plans.find(p => p["name"] === ctx.query["plan"]);
     if (!plan) {
       throw Boom.notFound("Plan not found", { plan: ctx.query["plan"] });
@@ -164,7 +164,7 @@ module.exports = async function createDomains(globals) {
       throw Boom.notFound("Subscription not found", { id: ctx.params["id"] });
     }
 
-    const { plans, ...manager } = await subscriptionService.getPlans();
+    const { plans, ...manager } = await subscriptionService.getData();
 
     const plan = plans.find(p => p["id"] === subscription["plan"]["id"]);
     if (!plan) {

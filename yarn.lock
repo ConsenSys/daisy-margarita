@@ -845,10 +845,10 @@
     eslint-plugin-react "^7.12.4"
     prettier "^1.16.4"
 
-"@tokenfoundry/foundry-frontend@^0.1.20":
-  version "0.1.20"
-  resolved "https://registry.yarnpkg.com/@tokenfoundry/foundry-frontend/-/foundry-frontend-0.1.20.tgz#9c49fad3ee336048db0a8d5f5f8cd3cc63027dd2"
-  integrity sha512-1Wnal3sDT8UQKJPsq1K0ZXeIGV5loPaiEfS/JSIf0vZgjgxyUDD9+9jg2Ja+EyOz75h9GDs/1mqMP1SSqF7g2g==
+"@tokenfoundry/foundry-frontend@^0.1.21":
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/@tokenfoundry/foundry-frontend/-/foundry-frontend-0.1.21.tgz#8f33ba873d4188be594b6a889d7805dc013fc537"
+  integrity sha512-B7+7g+IdAVen13xKyZZ65scycnpZnyTCwFfrR0j9SfnHAS36eiDotJLOraklqHo9V2Ma4+oNsstmPa4v35u/Cw==
   dependencies:
     react-copy-to-clipboard "^5.0.1"
 
@@ -2348,15 +2348,15 @@ cyclist@~0.2.2:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
   integrity sha1-GzN5LhHpFKL9bW7WRHRkRE5fpkA=
 
-daisy-sdk@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/daisy-sdk/-/daisy-sdk-0.2.1.tgz#e8e4151bdd7b61876653d61694567ee8f69baf41"
-  integrity sha512-OZSh7zSp4gyyuchWqsGigOzxk5gz2U9zGYkswaVZUy3uY8RztPIeZOAupemrapxutYzyO+tbhLRqiDSy87O/FA==
+daisy-sdk@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/daisy-sdk/-/daisy-sdk-0.4.0.tgz#1c143e9b98a11f7fc4f371a83b3460691ba9a552"
+  integrity sha512-FLuCMsiXGMyvxc6+4bV2RnQ1oR0YxdJ5Ftm54qjXHK/nXsx4Z2ycKqtoyZC2gpv8W4Xhp57W0GrqC1wtTPKd5Q==
   dependencies:
     axios "^0.18.0"
     eth-sig-util "^2.1.2"
     ethereumjs-util "^6.1.0"
-    eventemitter3 "^3.1.0"
+    eventemitter3 "^3.1.2"
 
 damerau-levenshtein@^1.0.4:
   version "1.0.4"
@@ -3150,10 +3150,10 @@ eventemitter3@1.1.1:
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-1.1.1.tgz#47786bdaa087caf7b1b75e73abc5c7d540158cd0"
   integrity sha1-R3hr2qCHyvext15zq8XH1UAVjNA=
 
-eventemitter3@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.0.tgz#090b4d6cdbd645ed10bf750d4b5407942d7ba163"
-  integrity sha512-ivIvhpq/Y0uSjcHDcOIccjmYjGLcP09MFGE7ysAwkAvkXfpZlC985pH2/ui64DKazbTW/4kN3yqozUxlXzI6cA==
+eventemitter3@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.2.tgz#2d3d48f9c346698fce83a85d7d664e98535df6e7"
+  integrity sha512-tvtQIeLVHjDkJYnzf2dgVMxfuSGJeM/7UCG17TT4EumTfNtF+0nebF/4zWOIkCreAbtNqhGEboB6BWrwqNaw4Q==
 
 events@^3.0.0:
   version "3.0.0"
