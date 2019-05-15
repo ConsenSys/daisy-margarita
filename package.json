@@ -1,6 +1,6 @@
 {
   "name": "@tokenfoundry/subscriptions-poc",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "POC",
   "main": "server/index.js",
   "author": "Patricio López Juri <patricio.juri@consensys.net> (https://lopezjuri.com)",
