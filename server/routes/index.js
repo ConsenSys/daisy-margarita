@@ -17,8 +17,8 @@ module.exports = async function createDomains(globals) {
   const PROMO_CODE = "PROMO_CODE";
 
   const SDK_DEV = {
-    baseURL: "https://sdk.staging.daisypayments.com/",
-    // baseURL: "http://localhost:8000",
+    // baseURL: "https://sdk.staging.daisypayments.com/",
+    baseURL: "http://localhost:8000",
   };
 
   const subscriptionService = new ServiceSubscriptions(
@@ -263,6 +263,33 @@ module.exports = async function createDomains(globals) {
     });
 
     ctx.body = subscription;
+  });
+
+  // POST /api/callback/
+  router.post("/api/callback/", api, async ctx => {
+    const payload = ctx.request.body;
+
+    const authorizer = {
+      privateKey: Buffer.from(config.get("authorizer.privateKey"), "hex"),
+    };
+    const authSignature = await subscriptionService.authorize(
+      authorizer,
+      payload.agreement,
+    );
+
+    // TODO: associate to user.
+
+    ctx.status = 200;
+    ctx.body = {
+      authSignature,
+      // redirectURL: "", // optional
+    };
+  });
+
+  // GET /success/
+  router.get("/success/", view, async ctx => {
+    // TODO: create view
+    ctx.body = "Invitation complete!";
   });
 
   return router;

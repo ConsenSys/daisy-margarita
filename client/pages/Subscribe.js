@@ -1,31 +1,19 @@
 /* eslint camelcase:0, no-restricted-globals:0 */
 
-import React, { Component, PureComponent } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled, { keyframes } from "styled-components";
 import { withSSR } from "koa-nextjs/react";
 import DaisySDK from "daisy-sdk";
 
 import client from "../addons/client";
-import MetaMaskContext from "../addons/metamask";
+import { withMetaMaskContext } from "../addons/metamask";
 import { Page } from "../components";
 
 const SDK_DEV = {
-  baseURL: "https://sdk.staging.daisypayments.com/",
-  // baseURL: "http://localhost:8000",
+  // baseURL: "https://sdk.staging.daisypayments.com/",
+  baseURL: "http://localhost:8000",
 };
-
-function withMetamask(Web2Component) {
-  return class Metamasked extends PureComponent {
-    render() {
-      return (
-        <MetaMaskContext.Consumer>
-          {metamask => <Web2Component {...this.props} metamask={metamask} />}
-        </MetaMaskContext.Consumer>
-      );
-    }
-  };
-}
 
 const rotate = keyframes`
   from {
@@ -328,238 +316,234 @@ class Subscribe extends Component {
   };
 
   render() {
-    const { plan, subscription, ...props } = this.props;
+    const {
+      plan,
+      subscription,
+      metamask: { web3, accounts, error },
+      ...props
+    } = this.props;
     const { steps, daisy } = this.state;
 
     return (
       <Page>
         <Page.Navbar {...props} />
-        <MetaMaskContext.Consumer>
-          {({ web3, accounts, error }) => (
-            <Page.Body>
-              <div className="container">
-                <h1>
-                  Subscribe to <em>{plan["name"]}</em>
-                  {plan["private"] && (
-                    <span className="badge badge-secondary">Enterprise</span>
-                  )}
-                </h1>
-                <p className="lead">
-                  Subscription bill id: <code>{subscription["id"]}</code>
+        <Page.Body>
+          <div className="container">
+            <h1>
+              Subscribe to <em>{plan["name"]}</em>
+              {plan["private"] && (
+                <span className="badge badge-secondary">Enterprise</span>
+              )}
+            </h1>
+            <p className="lead">
+              Subscription bill id: <code>{subscription["id"]}</code>
+            </p>
+            {daisy && !daisy["error"] && <p>Status: {daisy["state"]}</p>}
+            {daisy && daisy["error"] && (
+              <p>
+                Status: {daisy["state"]}, Error: {daisy["error"]}
+              </p>
+            )}
+            {!daisy && <p>Not created yet</p>}
+          </div>
+          <div className="container">
+            <Item
+              className="card mb-3"
+              disabled={steps[0].status === STATUS.SUCCESS}
+            >
+              <div className="card-body">
+                <StatusBadge status={steps[0].status} />
+                <h5 className="card-title">Approval</h5>
+                <p className="card-text">
+                  Send a transaction to the ERC20 contract to allow us to
+                  receive tokens.
                 </p>
-                {daisy && !daisy["error"] && <p>Status: {daisy["state"]}</p>}
-                {daisy && daisy["error"] && (
-                  <p>
-                    Status: {daisy["state"]}, Error: {daisy["error"]}
-                  </p>
-                )}
-                {!daisy && <p>Not created yet</p>}
-              </div>
-              <div className="container">
-                <Item
-                  className="card mb-3"
-                  disabled={steps[0].status === STATUS.SUCCESS}
+                <form
+                  onSubmit={e => {
+                    e.preventDefault();
+                    this.handleApprove(web3, accounts[0]);
+                  }}
                 >
-                  <div className="card-body">
-                    <StatusBadge status={steps[0].status} />
-                    <h5 className="card-title">Approval</h5>
-                    <p className="card-text">
-                      Send a transaction to the ERC20 contract to allow us to
-                      receive tokens.
-                    </p>
-                    <form
-                      onSubmit={e => {
-                        e.preventDefault();
-                        this.handleApprove(web3, accounts[0]);
-                      }}
-                    >
-                      <div className="form-row">
-                        <div className="form-group col-md-6">
-                          <label htmlFor="amount">Amount:</label>
-                          <input
-                            type="text"
-                            value={this.state.amount}
-                            className="form-control"
-                            id="amount"
-                            onChange={e =>
-                              this.setState({ amount: e.target.value })
-                            }
-                            placeholder="Amount of tokens to approve"
-                          />
-                          <small className="form-text text-muted">
-                            Use MetaMask to select the account you want to use
-                            to pay
-                          </small>
-                        </div>
-                        {plan["private"] && (
-                          <div className="form-group col-md-6">
-                            <label htmlFor="code">Code:</label>
-                            <input
-                              type="text"
-                              value={this.state.code}
-                              className="form-control"
-                              id="code"
-                              onChange={e =>
-                                this.setState({
-                                  code: e.target.value.toUpperCase(),
-                                })
-                              }
-                              placeholder="PROMO_CODE"
-                            />
-                            <small className="form-text text-muted">
-                              Contact our sales teams to get the access code for
-                              this enterprise plan.
-                            </small>
-                          </div>
-                        )}
-                      </div>
-                      <div className="form-row">
-                        <div className="form-group col-md-6">
-                          <label htmlFor="chargeTo">Charge To:</label>
-                          <input
-                            type="text"
-                            value={accounts[0]}
-                            className="form-control"
-                            id="chargeTo"
-                            placeholder="Ethereum Address"
-                            readOnly
-                          />
-                          <small className="form-text text-muted">
-                            Use MetaMask to select the account you want to use
-                            to pay
-                          </small>
-                        </div>
-                        <div className="form-group col-md-6">
-                          <label htmlFor="beneficiary">Beneficiary:</label>
-                          <input
-                            type="text"
-                            value={accounts[0]}
-                            className="form-control"
-                            id="beneficiary"
-                            placeholder="Ethereum Address"
-                            readOnly
-                          />
-                          <small className="form-text text-muted">
-                            Beneficiary of the subscription
-                          </small>
-                        </div>
-                      </div>
-
-                      <p>
-                        <strong>
-                          At any moment you still have absolute control of your
-                          tokens
-                        </strong>{" "}
-                        and you only going to be charged at the beginning of
-                        each period.
-                      </p>
-
-                      <button
-                        style={{ backgroundColor: "#E67C19" }}
-                        type="submit"
-                        disabled={Boolean(
-                          !web3 ||
-                            error ||
-                            steps[0].status !== STATUS.NOT_STARTED,
-                        )}
-                        className={`btn btn-primary ${(!web3 ||
-                          error ||
-                          steps[0].status !== STATUS.NOT_STARTED) &&
-                          "disabled"}`}
-                      >
-                        {steps[0].status === STATUS.NOT_STARTED &&
-                          "Approve with MetaMask"}
-                        {steps[0].status === STATUS.PROCESSING &&
-                          steps[0].confirmationNumber === 0 &&
-                          `Processing...`}
-                        {steps[0].status === STATUS.PROCESSING &&
-                          steps[0].confirmationNumber > 0 &&
-                          `Processing (${
-                            steps[0].confirmationNumber
-                          }/${CONFIRMATIONS})`}
-                        {steps[0].status === STATUS.SUCCESS && "Success!"}
-                      </button>
-                    </form>
-                    {steps[0].receipt && (
-                      <pre>{JSON.stringify(steps[0].receipt, null, 2)}</pre>
-                    )}
-                    <p className="card-text">
-                      <small className="text-muted">
-                        {`This will consume some gas, but we promise it's gonna be
-                    cheap`}
+                  <div className="form-row">
+                    <div className="form-group col-md-6">
+                      <label htmlFor="amount">Amount:</label>
+                      <input
+                        type="text"
+                        value={this.state.amount}
+                        className="form-control"
+                        id="amount"
+                        onChange={e =>
+                          this.setState({ amount: e.target.value })
+                        }
+                        placeholder="Amount of tokens to approve"
+                      />
+                      <small className="form-text text-muted">
+                        Use MetaMask to select the account you want to use to
+                        pay
                       </small>
-                    </p>
-                  </div>
-                </Item>
-                <Item
-                  className="card mb-3"
-                  disabled={
-                    steps[0].status !== STATUS.SUCCESS ||
-                    steps[1].status === STATUS.SUCCESS
-                  }
-                >
-                  <div className="card-body">
-                    <StatusBadge status={steps[1].status} />
-                    <h5 className="card-title">Payment signature</h5>
-                    <p className="card-text">
-                      This signature allow us to charge the subscription cost.
-                    </p>
-                    <form
-                      onSubmit={e => {
-                        e.preventDefault();
-                        return this.handleSign(web3, accounts[0]);
-                      }}
-                    >
-                      <div className="form-row">
-                        <div className="form-group">
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              disabled
-                              checked={this.state.periods === Infinity}
-                              onChange={this.handleTogglePeriods}
-                              id="periods"
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor="periods"
-                            >
-                              Renew indefinitely
-                            </label>
-                          </div>
-                        </div>
+                    </div>
+                    {plan["private"] && (
+                      <div className="form-group col-md-6">
+                        <label htmlFor="code">Code:</label>
+                        <input
+                          type="text"
+                          value={this.state.code}
+                          className="form-control"
+                          id="code"
+                          onChange={e =>
+                            this.setState({
+                              code: e.target.value.toUpperCase(),
+                            })
+                          }
+                          placeholder="PROMO_CODE"
+                        />
+                        <small className="form-text text-muted">
+                          Contact our sales teams to get the access code for
+                          this enterprise plan.
+                        </small>
                       </div>
-
-                      <button
-                        type="submit"
-                        disabled={Boolean(
-                          !web3 || steps[1].status !== STATUS.NOT_STARTED,
-                        )}
-                        className={`btn btn-primary ${(!web3 ||
-                          steps[1].status !== STATUS.NOT_STARTED) &&
-                          "disabled"}`}
-                      >
-                        {steps[1].status !== STATUS.SUCCESS &&
-                          "Sign agreement & submit"}
-                        {steps[1].status === STATUS.SUCCESS && "Success!"}
-                      </button>
-                      {steps[1].signature && (
-                        <pre>{JSON.stringify(steps[1].signature, null, 2)}</pre>
-                      )}
-                      <p className="card-text">
-                        <small className="text-muted">No gas involved!</small>
-                      </p>
-                    </form>
+                    )}
                   </div>
-                </Item>
+                  <div className="form-row">
+                    <div className="form-group col-md-6">
+                      <label htmlFor="chargeTo">Charge To:</label>
+                      <input
+                        type="text"
+                        value={accounts[0] || ""}
+                        className="form-control"
+                        id="chargeTo"
+                        placeholder="Ethereum Address"
+                        readOnly
+                      />
+                      <small className="form-text text-muted">
+                        Use MetaMask to select the account you want to use to
+                        pay
+                      </small>
+                    </div>
+                    <div className="form-group col-md-6">
+                      <label htmlFor="beneficiary">Beneficiary:</label>
+                      <input
+                        type="text"
+                        value={accounts[0] || ""}
+                        className="form-control"
+                        id="beneficiary"
+                        placeholder="Ethereum Address"
+                        readOnly
+                      />
+                      <small className="form-text text-muted">
+                        Beneficiary of the subscription
+                      </small>
+                    </div>
+                  </div>
+
+                  <p>
+                    <strong>
+                      At any moment you still have absolute control of your
+                      tokens
+                    </strong>{" "}
+                    and you only going to be charged at the beginning of each
+                    period.
+                  </p>
+
+                  <button
+                    style={{ backgroundColor: "#E67C19" }}
+                    type="submit"
+                    disabled={Boolean(
+                      !web3 || error || steps[0].status !== STATUS.NOT_STARTED,
+                    )}
+                    className={`btn btn-primary ${(!web3 ||
+                      error ||
+                      steps[0].status !== STATUS.NOT_STARTED) &&
+                      "disabled"}`}
+                  >
+                    {steps[0].status === STATUS.NOT_STARTED &&
+                      "Approve with MetaMask"}
+                    {steps[0].status === STATUS.PROCESSING &&
+                      steps[0].confirmationNumber === 0 &&
+                      `Processing...`}
+                    {steps[0].status === STATUS.PROCESSING &&
+                      steps[0].confirmationNumber > 0 &&
+                      `Processing (${
+                        steps[0].confirmationNumber
+                      }/${CONFIRMATIONS})`}
+                    {steps[0].status === STATUS.SUCCESS && "Success!"}
+                  </button>
+                </form>
+                {steps[0].receipt && (
+                  <pre>{JSON.stringify(steps[0].receipt, null, 2)}</pre>
+                )}
+                <p className="card-text">
+                  <small className="text-muted">
+                    {`This will consume some gas, but we promise it's gonna be
+                    cheap`}
+                  </small>
+                </p>
               </div>
-            </Page.Body>
-          )}
-        </MetaMaskContext.Consumer>
+            </Item>
+            <Item
+              className="card mb-3"
+              disabled={
+                steps[0].status !== STATUS.SUCCESS ||
+                steps[1].status === STATUS.SUCCESS
+              }
+            >
+              <div className="card-body">
+                <StatusBadge status={steps[1].status} />
+                <h5 className="card-title">Payment signature</h5>
+                <p className="card-text">
+                  This signature allow us to charge the subscription cost.
+                </p>
+                <form
+                  onSubmit={e => {
+                    e.preventDefault();
+                    return this.handleSign(web3, accounts[0]);
+                  }}
+                >
+                  <div className="form-row">
+                    <div className="form-group">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          disabled
+                          checked={this.state.periods === Infinity}
+                          onChange={this.handleTogglePeriods}
+                          id="periods"
+                        />
+                        <label className="form-check-label" htmlFor="periods">
+                          Renew indefinitely
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={Boolean(
+                      !web3 || steps[1].status !== STATUS.NOT_STARTED,
+                    )}
+                    className={`btn btn-primary ${(!web3 ||
+                      steps[1].status !== STATUS.NOT_STARTED) &&
+                      "disabled"}`}
+                  >
+                    {steps[1].status !== STATUS.SUCCESS &&
+                      "Sign agreement & submit"}
+                    {steps[1].status === STATUS.SUCCESS && "Success!"}
+                  </button>
+                  {steps[1].signature && (
+                    <pre>{JSON.stringify(steps[1].signature, null, 2)}</pre>
+                  )}
+                  <p className="card-text">
+                    <small className="text-muted">No gas involved!</small>
+                  </p>
+                </form>
+              </div>
+            </Item>
+          </div>
+        </Page.Body>
       </Page>
     );
   }
 }
 
-export default withSSR()(withMetamask(Subscribe));
+export default withSSR()(withMetaMaskContext(Subscribe));
