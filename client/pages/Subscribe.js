@@ -156,6 +156,32 @@ class Subscribe extends Component {
     clearInterval(this.polling);
   }
 
+  // handleCancel = async () => {
+  //   const {
+  //     web3,
+  //     accounts: [account],
+  //   } = this.props.metamask;
+
+  //   const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
+  //   await daisy.sync();
+  //   const token = daisy.loadToken();
+
+  //   const subscriptionHash =
+  //     "0x5515be3b5292d9044d93af0bffa426b4701ee70f7f8eda6e7e6d56f8f371ab7e";
+
+  //   const { signature, agreement } = await daisy
+  //     .prepareToken(token)
+  //     .signCancel({
+  //       account,
+  //       subscriptionHash,
+  //       signatureExpiresAt: Number.MAX_SAFE_INTEGER,
+  //     });
+  //   console.log(signature, agreement);
+
+  //   const data = await daisy.submitCancel({ agreement, signature });
+  //   console.log(data);
+  // };
+
   handlePolling = async () => {
     const {
       subscription: { id },
@@ -463,9 +489,7 @@ class Subscribe extends Component {
                       `Processing...`}
                     {steps[0].status === STATUS.PROCESSING &&
                       steps[0].confirmationNumber > 0 &&
-                      `Processing (${
-                        steps[0].confirmationNumber
-                      }/${CONFIRMATIONS})`}
+                      `Processing (${steps[0].confirmationNumber}/${CONFIRMATIONS})`}
                     {steps[0].status === STATUS.SUCCESS && "Success!"}
                   </button>
                 </form>

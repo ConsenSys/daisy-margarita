@@ -3,7 +3,7 @@ build-server
 build-client
 db.json
 
-# `foundry-frontend` dev env
+# `petals` dev env
 .yalc
 yalc.lock
 

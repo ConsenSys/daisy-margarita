@@ -13,22 +13,6 @@ class Account extends PureComponent {
   render() {
     const { subscriptions, ...props } = this.props;
 
-    // const { ...props } = this.props;
-    // const subscriptions = [
-    //   {
-    //     id: 0,
-    //     name: "PRO Plan",
-    //     status: "active",
-    //     expiration: "14/8/2019 - in 1 month 3 days",
-    //   },
-    //   {
-    //     id: 1,
-    //     name: "Basic Plan",
-    //     status: "active",
-    //     expiration: "14/7/2020 - in 1 year",
-    //   },
-    // ];
-
     return (
       <Page>
         <Page.Navbar {...props} />

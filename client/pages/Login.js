@@ -5,6 +5,9 @@ import { Page } from "../components";
 import client from "../addons/client";
 import { REDIRECT } from "../addons/url";
 
+const EMAIL = "admin@daisypayments.com";
+const PASSWORD = "12345678";
+
 class Login extends PureComponent {
   state = {
     email: "",
@@ -47,11 +50,9 @@ class Login extends PureComponent {
                   Tip: use{" "}
                   <code
                     style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      this.setState({ email: "admin@daisypayments.com" })
-                    }
+                    onClick={() => this.setState({ email: EMAIL })}
                   >
-                    admin@daisypayments.com
+                    {EMAIL}
                   </code>
                 </small>
               </div>
@@ -70,9 +71,9 @@ class Login extends PureComponent {
                   Tip: use{" "}
                   <code
                     style={{ cursor: "pointer" }}
-                    onClick={() => this.setState({ password: "12345678" })}
+                    onClick={() => this.setState({ password: PASSWORD })}
                   >
-                    12345678
+                    {PASSWORD}
                   </code>
                 </small>
               </div>

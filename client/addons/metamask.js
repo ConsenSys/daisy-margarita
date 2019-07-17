@@ -1,7 +1,7 @@
 import {
   createMetaMaskContext,
   withMetaMask,
-} from "@tokenfoundry/react-metamask";
+} from "@daisypayments/react-metamask";
 
 const MetaMaskContext = createMetaMaskContext();
 

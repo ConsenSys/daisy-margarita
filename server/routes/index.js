@@ -225,7 +225,7 @@ module.exports = async function createDomains(globals) {
       ctx.status = 201;
       ctx.body = item
         .assign({
-          daisyId: data["id"], // save Daisy ID
+          daisyId: data["daisyId"], // save Daisy ID
           plan: subscription["plan"],
           agreement,
           receipt,
@@ -259,7 +259,7 @@ module.exports = async function createDomains(globals) {
     }
 
     const subscription = await subscriptionService.getSubscription({
-      id: item["daisyId"],
+      daisyId: item["daisyId"],
     });
 
     ctx.body = subscription;
