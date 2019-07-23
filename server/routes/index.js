@@ -1,8 +1,10 @@
 const Router = require("koa-router");
 const compose = require("koa-compose");
 const Boom = require("boom");
+const dedent = require("dedent");
 const uuidv4 = require("uuid/v4");
 const { ServiceSubscriptions } = require("daisy-sdk/private");
+const webhooks = require("daisy-sdk/private/webhooks");
 
 const {
   handledErrors,
@@ -267,21 +269,33 @@ module.exports = async function createDomains(globals) {
 
   // POST /api/callback/
   router.post("/api/callback/", api, async ctx => {
-    const payload = ctx.request.body;
-
-    const authorizer = {
-      privateKey: Buffer.from(config.get("authorizer.privateKey"), "hex"),
-    };
-    const authSignature = await subscriptionService.authorize(
-      authorizer,
-      payload.agreement,
-    );
+    const { digest, ...payload } = ctx.request.body;
 
     // TODO: associate to user.
 
+    const isAuthentic = webhooks.verify({
+      digest,
+      message: payload,
+      publicKey: dedent`
+        -----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyUaW5FK4ogS2/j7e7h65
+        u73/1QrdfocqHB1SD5bkMQO6Z2CR1+dqa9afty3DQ+mLJ7gupOjvYFYrsiIQoMVc
+        J3zsmlYNjAnoHe8Kn2nU+Gjq+mJ6mscRIC6uMIMm/LslsiMugeL1YlpYXZ0uwbnY
+        TDKiC+g08iGc3tNiaFVCrzNcTHjoTyuCF7M0Pvh21UkWPcAJFDSR+YTtrXjpLMAB
+        jm3Vij8IarAmoCmTMIlUPbCb3j6NMjP4r0hulFUx6/u0DFvQPfKwzKnOph0CoX8u
+        kde74DGOsKxinYycP20w7vaypC9eLY7M3PKtJCft3EypTEvgZRHG5Wd2BaTOvzF4
+        tQIDAQAB
+        -----END PUBLIC KEY-----
+      `,
+    });
+
+    if (!isAuthentic) {
+      throw Boom.forbidden("Not authentic");
+    }
+
     ctx.status = 200;
     ctx.body = {
-      authSignature,
+      authSignature: payload.authSignature,
       // redirectURL: "", // optional
     };
   });

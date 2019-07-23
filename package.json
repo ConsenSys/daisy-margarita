@@ -23,6 +23,7 @@
     "boom": "^7.2.2",
     "config": "^3.2.0",
     "daisy-sdk": "^0.5.1",
+    "dedent": "^0.7.0",
     "dotenv": "^8.0.0",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
