@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled, { keyframes } from "styled-components";
 import { withSSR } from "koa-nextjs/react";
-import DaisySDK from "daisy-sdk";
+import DaisySDK from "@daisypayments/daisy-sdk";
 
 import client from "../addons/client";
 import { withMetaMaskContext } from "../addons/metamask";
@@ -12,7 +12,8 @@ import { Page } from "../components";
 
 const SDK_DEV = {
   // baseURL: "https://sdk.staging.daisypayments.com/",
-  baseURL: "http://localhost:8000",
+  // baseURL: "http://localhost:8000",
+  baseURL: "http://167.172.238.224:8000",
 };
 
 const rotate = keyframes`
@@ -156,31 +157,30 @@ class Subscribe extends Component {
     clearInterval(this.polling);
   }
 
-  // handleCancel = async () => {
-  //   const {
-  //     web3,
-  //     accounts: [account],
-  //   } = this.props.metamask;
+  handleCancel = async () => {
+    const {
+      web3,
+      accounts: [account],
+    } = this.props.metamask;
 
-  //   const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
-  //   await daisy.sync();
-  //   const token = daisy.loadToken();
+    console.log(this.props.manager);
 
-  //   const subscriptionHash =
-  //     "0x5515be3b5292d9044d93af0bffa426b4701ee70f7f8eda6e7e6d56f8f371ab7e";
+    const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
+    await daisy.sync();
+    const token = daisy.loadToken();
 
-  //   const { signature, agreement } = await daisy
-  //     .prepareToken(token)
-  //     .signCancel({
-  //       account,
-  //       subscriptionHash,
-  //       signatureExpiresAt: Number.MAX_SAFE_INTEGER,
-  //     });
-  //   console.log(signature, agreement);
+    const { signature, agreement } = await daisy
+      .prepareToken(token)
+      .signCancel({
+        account,
+        onChainId: this.state.daisy["onChainId"],
+        signatureExpiresAt: Number.MAX_SAFE_INTEGER,
+      });
+    console.log(signature, agreement);
 
-  //   const data = await daisy.submitCancel({ agreement, signature });
-  //   console.log(data);
-  // };
+    const data = await daisy.submitCancel({ agreement, signature });
+    console.log(data);
+  };
 
   handlePolling = async () => {
     const {
@@ -371,6 +371,7 @@ class Subscribe extends Component {
               </p>
             )}
             {!daisy && <p>Not created yet</p>}
+            <button onClick={this.handleCancel}>Cancel</button>
           </div>
           <div className="container">
             <Item

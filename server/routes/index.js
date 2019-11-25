@@ -3,8 +3,9 @@ const compose = require("koa-compose");
 const Boom = require("boom");
 const dedent = require("dedent");
 const uuidv4 = require("uuid/v4");
-const { ServiceSubscriptions } = require("daisy-sdk/private");
-const webhooks = require("daisy-sdk/private/webhooks");
+const { ServiceSubscriptions } = require("@daisypayments/daisy-sdk/private");
+const webhooks = require("@daisypayments/daisy-sdk/private/webhooks");
+const fetch = require("node-fetch"); // eslint-disable-line no-shadow
 
 const {
   handledErrors,
@@ -20,7 +21,8 @@ module.exports = async function createDomains(globals) {
 
   const SDK_DEV = {
     // baseURL: "https://sdk.staging.daisypayments.com/",
-    baseURL: "http://localhost:8000",
+    // baseURL: "http://localhost:8000",
+    baseURL: "http://167.172.238.224:8000",
   };
 
   const subscriptionService = new ServiceSubscriptions(
@@ -29,6 +31,7 @@ module.exports = async function createDomains(globals) {
       secretKey: config.get("daisy.secretKey"),
     },
     SDK_DEV,
+    { fetch },
   );
 
   const router = new Router();
@@ -178,7 +181,11 @@ module.exports = async function createDomains(globals) {
       props: {
         plan,
         subscription,
-        manager,
+        manager: {
+          ...manager,
+          identifier: config.get("daisy.identifier"),
+          secretKey: config.get("daisy.secretKey"),
+        },
       },
     });
   });
@@ -263,6 +270,22 @@ module.exports = async function createDomains(globals) {
     const subscription = await subscriptionService.getSubscription({
       daisyId: item["daisyId"],
     });
+
+    console.log(
+      await subscriptionService.getSubscription({
+        onChainId: subscription["onChainId"],
+      }),
+    );
+    console.log(
+      await subscriptionService.getReceipts({
+        daisyId: subscription["daisyId"],
+      }),
+    );
+    console.log(
+      await subscriptionService.getReceipts({
+        onChainId: subscription["onChainId"],
+      }),
+    );
 
     ctx.body = subscription;
   });
