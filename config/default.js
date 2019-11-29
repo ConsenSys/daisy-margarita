@@ -6,11 +6,6 @@ const pkg = require("../package.json");
 
 dotenv.config();
 
-assert(
-  process.env.AUTHORIZER_PRIVATE_KEY,
-  "Missing AUTHORIZER_PRIVATE_KEY env var.",
-);
-
 module.exports = {
   // base config
   NODE_ENV: "development",
@@ -18,16 +13,6 @@ module.exports = {
   host: process.env.HOST || "localhost",
   port: process.env.PORT || 9999,
   instance: process.env.NODE_APP_INSTANCE || null, // PM2 instance
-
-  provider: {
-    uri: process.env.PROVIDER_URI,
-  },
-
-  mnemonic: process.env.MNEMONIC,
-
-  authorizer: {
-    privateKey: process.env.AUTHORIZER_PRIVATE_KEY,
-  },
 
   daisy: {
     identifier: process.env.DAISY_ID,

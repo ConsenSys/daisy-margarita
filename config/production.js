@@ -3,7 +3,7 @@ module.exports = {
   NODE_ENV: "production",
 
   // koa config
-  keys: [process.env.SECRET_KEY],
+  keys: [process.env.SECRET_KEY || "SECRET_KEY"],
   proxy: true,
 
   renderer: {

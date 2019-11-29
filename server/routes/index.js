@@ -293,19 +293,19 @@ module.exports = async function createDomains(globals) {
       throw Boom.notFound("Entry or plan not found.", { id: ctx.params["id"] });
     }
 
-    let authSignature = null; // for private plans
-    const { agreement, receipt, signature, code } = ctx.request.body;
-    if (subscription["plan"]["private"] && code !== PROMO_CODE) {
-      throw Boom.badRequest("Invalid PROMO CODE", { code });
-    } else if (subscription["plan"]["private"]) {
-      const authorizer = {
-        privateKey: Buffer.from(config.get("authorizer.privateKey"), "hex"),
-      };
-      authSignature = await subscriptionService.authorize(
-        authorizer,
-        agreement,
-      );
-    }
+    // let authSignature = null; // for private plans
+    // const { agreement, receipt, signature, code } = ctx.request.body;
+    // if (subscription["plan"]["private"] && code !== PROMO_CODE) {
+    //   throw Boom.badRequest("Invalid PROMO CODE", { code });
+    // } else if (subscription["plan"]["private"]) {
+    //   const authorizer = {
+    //     privateKey: Buffer.from(config.get("authorizer.privateKey"), "hex"),
+    //   };
+    //   authSignature = await subscriptionService.authorize(
+    //     authorizer,
+    //     agreement,
+    //   );
+    // }
 
     const item = db
       .get("users")
