@@ -30,6 +30,24 @@ async function main() {
           password: "12345678",
           name: "John Appleseed",
           subscriptions: [],
+          orders: [],
+        },
+      ],
+      products: [
+        {
+          id: 1,
+          name: "Record player",
+          price: [`249${"0".repeat(18)}`, "DAI"],
+        },
+        {
+          id: 2,
+          name: "Vinyl record",
+          price: [`19${"0".repeat(18)}`, "DAI"],
+        },
+        {
+          id: 3,
+          name: "Sleeve",
+          price: [`1${"0".repeat(18)}`, "DAI"],
         },
       ],
     })

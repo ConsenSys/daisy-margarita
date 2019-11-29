@@ -35,6 +35,19 @@ class Index extends PureComponent {
                 </a>
               </div>
               <div className="row">
+                <div className="col col-xs-12">
+                  <div className="card text-center">
+                    <div className="card-body">
+                      <h5 className="card-title">Premium products</h5>
+                      <a href="/store" className="btn btn-primary">
+                        Go shopping
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div className="row">
                 <div className="col col-xs-12 col-sm-4">
                   <div className="card text-center">
                     <div className="card-header">Basic Plan</div>

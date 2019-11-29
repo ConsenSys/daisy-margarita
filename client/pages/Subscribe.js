@@ -163,11 +163,12 @@ class Subscribe extends Component {
       accounts: [account],
     } = this.props.metamask;
 
-    console.log(this.props.manager);
-
-    const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
-    await daisy.sync();
-    const token = daisy.loadToken();
+    const daisy = await DaisySDK.initSubscriptions({
+      manager: this.props.manager,
+      override: SDK_DEV,
+      withGlobals: { web3 },
+    });
+    const token = daisy.loadToken(this.props.plan);
 
     const { signature, agreement } = await daisy
       .prepareToken(token)
@@ -176,7 +177,6 @@ class Subscribe extends Component {
         onChainId: this.state.daisy["onChainId"],
         signatureExpiresAt: Number.MAX_SAFE_INTEGER,
       });
-    console.log(signature, agreement);
 
     const data = await daisy.submitCancel({ agreement, signature });
     console.log(data);
@@ -216,7 +216,7 @@ class Subscribe extends Component {
     }));
 
     const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
-    const token = daisy.loadToken();
+    const token = daisy.loadToken(this.props.plan);
 
     this.eventemitter = daisy
       .prepareToken(token)
@@ -285,7 +285,7 @@ class Subscribe extends Component {
     }));
 
     const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
-    const token = daisy.loadToken();
+    const token = daisy.loadToken(this.props.plan);
 
     try {
       const { signature, agreement } = await daisy.prepareToken(token).sign({
@@ -330,7 +330,7 @@ class Subscribe extends Component {
 
   attachToTransaction = async (web3, receipt) => {
     const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
-    const token = daisy.loadToken();
+    const token = daisy.loadToken(this.props.plan);
 
     this.eventemitter = await daisy.prepareToken(token).resume(receipt);
 

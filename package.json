@@ -17,7 +17,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@daisypayments/daisy-sdk": "0.7.0-beta.2",
+    "@daisypayments/daisy-sdk": "0.8.0-beta.3",
     "@daisypayments/petals": "^0.1.44",
     "@daisypayments/react-metamask": "^0.4.1",
     "axios": "^0.19.0",

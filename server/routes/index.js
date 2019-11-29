@@ -3,7 +3,7 @@ const compose = require("koa-compose");
 const Boom = require("boom");
 const dedent = require("dedent");
 const uuidv4 = require("uuid/v4");
-const { ServiceSubscriptions } = require("@daisypayments/daisy-sdk/private");
+const DaisySDK = require("@daisypayments/daisy-sdk/private");
 const webhooks = require("@daisypayments/daisy-sdk/private/webhooks");
 const fetch = require("node-fetch"); // eslint-disable-line no-shadow
 
@@ -13,6 +13,18 @@ const {
   handledJSONErrors,
   unhandledJSONErrors,
 } = require("../middlewares/errors");
+
+function calculatePrice(products, cart) {
+  const token = "DAI";
+  let total = 0;
+  // eslint-disable-next-line no-unused-vars
+  for (const [id, amount] of Object.entries(cart)) {
+    const product = products.find(p => String(p["id"]) === String(id));
+    const [price] = product["price"];
+    total += Number(price) * Number(amount || 0);
+  }
+  return [total, token];
+}
 
 module.exports = async function createDomains(globals) {
   const { config, db, pkg } = globals;
@@ -25,14 +37,23 @@ module.exports = async function createDomains(globals) {
     baseURL: "http://167.172.238.224:8000",
   };
 
-  const subscriptionService = new ServiceSubscriptions(
-    {
+  const subscriptionService = new DaisySDK.ServerSubscriptions({
+    manager: {
       identifier: config.get("daisy.identifier"),
       secretKey: config.get("daisy.secretKey"),
     },
-    SDK_DEV,
-    { fetch },
-  );
+    override: SDK_DEV,
+    withGlobals: { fetch },
+  });
+
+  const payments = new DaisySDK.ServerPayments({
+    manager: {
+      identifier: "margarita-otp-rinkeby",
+      secretKey: "key-otp",
+    },
+    override: SDK_DEV,
+    withGlobals: { fetch },
+  });
 
   const router = new Router();
 
@@ -66,6 +87,52 @@ module.exports = async function createDomains(globals) {
 
   router.get("/health", api, async ctx => {
     ctx.body = pkg;
+  });
+
+  router.get("/store/", view, auth, async ctx => {
+    const products = db.get("products").value();
+
+    await ctx.render({
+      page: "Store",
+      props: { products },
+    });
+  });
+
+  router.get("/store/checkout/:id/", view, auth, async ctx => {
+    const products = db.get("products").value();
+    const order = db
+      .get("users")
+      .find(ctx.state.user)
+      .get("orders", [])
+      .find({ id: ctx.params["id"] })
+      .value();
+
+    const invoice = await payments.getInvoice({
+      identifier: order["invoiceId"],
+    });
+
+    await ctx.render({
+      page: "StoreCheckout",
+      props: { products, order, invoice },
+    });
+  });
+
+  router.get("/api/store/checkout/:id/", api, auth, async ctx => {
+    const order = db
+      .get("users")
+      .find(ctx.state.user)
+      .get("orders", [])
+      .find({ id: ctx.params["id"] })
+      .value();
+
+    const invoice = await payments.getInvoice({
+      identifier: order["invoiceId"],
+    });
+    const receipts = await payments.getReceipts({
+      identifier: order["invoiceId"],
+    });
+
+    ctx.body = { order, invoice, receipts };
   });
 
   router.get("/about/", view, async ctx => {
@@ -188,6 +255,29 @@ module.exports = async function createDomains(globals) {
         },
       },
     });
+  });
+
+  // POST /api/store/checkout/
+  router.post("/api/store/checkout/", api, auth, async ctx => {
+    const cart = ctx.request.body["cart"];
+    const products = db.get("products").value();
+    const [sum, symbol] = calculatePrice(products, cart);
+
+    const invoice = await payments.createInvoice({
+      invoicedPrice: sum, // required
+      // invoicedEmail: user.email, // optional
+      // invoicedName: user.name, // optional
+      // invoicedDetail: "Access to premium episode #16", // optional
+    });
+
+    const order = db
+      .get("users")
+      .find(ctx.state.user)
+      .get("orders", [])
+      .insert({ cart, total: [sum, symbol], invoiceId: invoice["identifier"] })
+      .write();
+
+    ctx.body = { order };
   });
 
   // POST /api/subscriptions/:id
