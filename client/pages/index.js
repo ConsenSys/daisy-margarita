@@ -75,7 +75,7 @@ class Index extends PureComponent {
                         additional content.
                       </p>
                       <a
-                        href="/subscriptions/new?plan=p1"
+                        href="/subscriptions/new?plan=cGxhbjoxMw=="
                         className="btn btn-primary"
                       >
                         Subscribe

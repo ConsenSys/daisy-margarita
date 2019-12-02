@@ -726,10 +726,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@daisypayments/daisy-sdk@0.8.0-beta.3":
-  version "0.8.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@daisypayments/daisy-sdk/-/daisy-sdk-0.8.0-beta.3.tgz#a11c63172cb5e8e05d6619d6b6ce45f930de1b6b"
-  integrity sha512-xQalpyeyR78LyteDQBVYQ0r/YwXmB9LZZd74u83vH5MwtYRWq1s3sJ/U6yYXpd9LPy8SeOaEqY28Ivz2wARriA==
+"@daisypayments/daisy-sdk@^0.8.0-beta.4":
+  version "0.8.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@daisypayments/daisy-sdk/-/daisy-sdk-0.8.0-beta.4.tgz#2d23a3d1ccd2058fc0179f597799c35390b59c7a"
+  integrity sha512-fohQazk+3VtR2ui0h5ytpD5qUtAKZkvqtW66JAZYzvhbuJ2aqqvKQw3EMMaMJvs6hoh8e5ScU/qVzbynA8amXQ==
   dependencies:
     "@daisypayments/smart-contracts" "^0.2.2-beta"
     eth-sig-util "^2.5.0"

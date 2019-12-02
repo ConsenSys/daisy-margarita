@@ -29,12 +29,12 @@ function calculatePrice(products, cart) {
 module.exports = async function createDomains(globals) {
   const { config, db, pkg } = globals;
 
-  const PROMO_CODE = "PROMO_CODE";
+  // const PROMO_CODE = "PROMO_CODE";
 
   const SDK_DEV = {
-    // baseURL: "https://sdk.staging.daisypayments.com/",
+    baseURL: "https://sdk.staging.daisypayments.com/",
     // baseURL: "http://localhost:8000",
-    baseURL: "http://167.172.238.224:8000",
+    // baseURL: "http://167.172.238.224:8000",
   };
 
   const subscriptionService = new DaisySDK.ServerSubscriptions({
@@ -48,8 +48,8 @@ module.exports = async function createDomains(globals) {
 
   const payments = new DaisySDK.ServerPayments({
     manager: {
-      identifier: "margarita-otp-rinkeby",
-      secretKey: "key-otp",
+      identifier: config.get("daisyOTP.identifier"),
+      secretKey: config.get("daisyOTP.secretKey"),
     },
     override: SDK_DEV,
     withGlobals: { fetch },
@@ -113,7 +113,12 @@ module.exports = async function createDomains(globals) {
 
     await ctx.render({
       page: "StoreCheckout",
-      props: { products, order, invoice },
+      props: {
+        products,
+        order,
+        invoice,
+        identifier: config.get("daisyOTP.identifier"),
+      },
     });
   });
 
@@ -199,7 +204,8 @@ module.exports = async function createDomains(globals) {
   // GET /subscriptions/new/?plan=PLAN
   router.get("/subscriptions/new/", view, auth, async ctx => {
     const { plans } = await subscriptionService.getData();
-    const plan = plans.find(p => p["name"] === ctx.query["plan"]);
+
+    const plan = plans.find(p => p["id"] === ctx.query["plan"]);
     if (!plan) {
       throw Boom.notFound("Plan not found", { plan: ctx.query["plan"] });
     }
@@ -248,11 +254,7 @@ module.exports = async function createDomains(globals) {
       props: {
         plan,
         subscription,
-        manager: {
-          ...manager,
-          identifier: config.get("daisy.identifier"),
-          secretKey: config.get("daisy.secretKey"),
-        },
+        manager,
       },
     });
   });
@@ -294,7 +296,7 @@ module.exports = async function createDomains(globals) {
     }
 
     // let authSignature = null; // for private plans
-    // const { agreement, receipt, signature, code } = ctx.request.body;
+    const { agreement, receipt, signature } = ctx.request.body;
     // if (subscription["plan"]["private"] && code !== PROMO_CODE) {
     //   throw Boom.badRequest("Invalid PROMO CODE", { code });
     // } else if (subscription["plan"]["private"]) {
@@ -317,7 +319,7 @@ module.exports = async function createDomains(globals) {
       const { data } = await subscriptionService.submit({
         agreement,
         receipt,
-        authSignature,
+        // authSignature,
         signature,
       });
 

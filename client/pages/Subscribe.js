@@ -11,9 +11,9 @@ import { withMetaMaskContext } from "../addons/metamask";
 import { Page } from "../components";
 
 const SDK_DEV = {
-  // baseURL: "https://sdk.staging.daisypayments.com/",
+  baseURL: "https://sdk.staging.daisypayments.com/",
   // baseURL: "http://localhost:8000",
-  baseURL: "http://167.172.238.224:8000",
+  // baseURL: "http://167.172.238.224:8000",
 };
 
 const rotate = keyframes`

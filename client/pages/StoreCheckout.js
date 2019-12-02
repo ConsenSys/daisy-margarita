@@ -8,9 +8,9 @@ import client from "../addons/client";
 import { withMetaMaskContext } from "../addons/metamask";
 
 const SDK_DEV = {
-  // baseURL: "https://sdk.staging.daisypayments.com/",
+  baseURL: "https://sdk.staging.daisypayments.com/",
   // baseURL: "http://localhost:8000",
-  baseURL: "http://167.172.238.224:8000",
+  // baseURL: "http://167.172.238.224:8000",
 };
 
 class StoreCheckout extends PureComponent {
@@ -27,7 +27,6 @@ class StoreCheckout extends PureComponent {
   static defaultProps = {};
 
   state = {
-    order: this.props.order,
     invoice: this.props.invoice,
     receipts: [],
     transaction: null,
@@ -46,10 +45,8 @@ class StoreCheckout extends PureComponent {
     } = this.props;
     try {
       const { data } = await client.GET(`/api/store/checkout/${id}/`);
-      console.log(data);
 
       this.setState({
-        order: data["order"],
         invoice: data["invoice"],
         receipts: data["receipts"],
       });
@@ -71,8 +68,7 @@ class StoreCheckout extends PureComponent {
 
     const daisy = await DaisySDK.initPayments({
       manager: {
-        identifier: "margarita-otp-rinkeby",
-        secretKey: "key-otp",
+        identifier: this.props.identifier,
       },
       override: SDK_DEV,
       withGlobals: { web3 },
@@ -93,7 +89,7 @@ class StoreCheckout extends PureComponent {
       },
       ...props
     } = this.props;
-    const { order, invoice, receipts, transaction } = this.state;
+    const { invoice, receipts, transaction } = this.state;
 
     return (
       <Page>
@@ -124,6 +120,7 @@ class StoreCheckout extends PureComponent {
                     <li key={r["id"]}>Receipt: {r["txHash"]}</li>
                   ))}
                 </ul>
+                <pre>{JSON.stringify(invoice, null, 2)}</pre>
               </div>
             </div>
           </form>

@@ -18,6 +18,10 @@ module.exports = {
     identifier: process.env.DAISY_ID,
     secretKey: process.env.DAISY_SECRET_KEY,
   },
+  daisyOTP: {
+    identifier: process.env.DAISY_OTP_ID,
+    secretKey: process.env.DAISY_OTP_SECRET_KEY,
+  },
 
   renderer: {
     engine: "nextjs",
