@@ -1,5 +1,4 @@
 const path = require("path");
-const assert = require("assert");
 const dotenv = require("dotenv");
 
 const pkg = require("../package.json");

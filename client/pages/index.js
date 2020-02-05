@@ -1,15 +1,25 @@
 import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
 import { withSSR } from "koa-nextjs/react";
 
 import { Page } from "../components";
 
 class Index extends PureComponent {
+  static propTypes = {
+    plans: PropTypes.array.isRequired,
+  };
+
   state = {};
 
   render() {
+    const {
+      plans: [p1, p2],
+      ...props
+    } = this.props;
+
     return (
       <Page>
-        <Page.Navbar {...this.props} />
+        <Page.Navbar {...props} />
         <Page.Body>
           <Page.Body>
             <div className="container">
@@ -75,7 +85,7 @@ class Index extends PureComponent {
                         additional content.
                       </p>
                       <a
-                        href="/subscriptions/new?plan=cGxhbjoxMw=="
+                        href={`/subscriptions/new?plan=${p1["id"]}`}
                         className="btn btn-primary"
                       >
                         Subscribe
@@ -95,7 +105,7 @@ class Index extends PureComponent {
                         <strong>Requires activation code.</strong>
                       </p>
                       <a
-                        href="/subscriptions/new?plan=p2"
+                        href={`/subscriptions/new?plan=${p2["id"]}`}
                         className="btn btn-secondary"
                       >
                         Subscribe

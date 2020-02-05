@@ -11,8 +11,8 @@ import { withMetaMaskContext } from "../addons/metamask";
 import { Page } from "../components";
 
 const SDK_DEV = {
-  baseURL: "https://sdk.staging.daisypayments.com/",
-  // baseURL: "http://localhost:8000",
+  // baseURL: "https://sdk.staging.daisypayments.com/",
+  baseURL: "http://localhost:8000",
   // baseURL: "http://167.172.238.224:8000",
 };
 
@@ -168,10 +168,9 @@ class Subscribe extends Component {
       override: SDK_DEV,
       withGlobals: { web3 },
     });
-    const token = daisy.loadToken(this.props.plan);
 
     const { signature, agreement } = await daisy
-      .prepareToken(token)
+      .with(this.props.plan)
       .signCancel({
         account,
         onChainId: this.state.daisy["onChainId"],
@@ -216,10 +215,9 @@ class Subscribe extends Component {
     }));
 
     const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
-    const token = daisy.loadToken(this.props.plan);
 
     this.eventemitter = daisy
-      .prepareToken(token)
+      .with(this.props.plan)
       .approve(amount, { from: address });
 
     this.eventemitter
@@ -285,10 +283,9 @@ class Subscribe extends Component {
     }));
 
     const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
-    const token = daisy.loadToken(this.props.plan);
 
     try {
-      const { signature, agreement } = await daisy.prepareToken(token).sign({
+      const { signature, agreement } = await daisy.with(this.props.plan).sign({
         account,
         plan: this.props.plan,
         signatureExpiresAt: Number.MAX_SAFE_INTEGER, // DEV ONLY
@@ -330,9 +327,8 @@ class Subscribe extends Component {
 
   attachToTransaction = async (web3, receipt) => {
     const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
-    const token = daisy.loadToken(this.props.plan);
 
-    this.eventemitter = await daisy.prepareToken(token).resume(receipt);
+    this.eventemitter = await daisy.with(this.props.plan).resume(receipt);
 
     this.eventemitter
       .on("transactionHash", this.handleApprove_transactionHash)
@@ -371,7 +367,9 @@ class Subscribe extends Component {
               </p>
             )}
             {!daisy && <p>Not created yet</p>}
-            <button onClick={this.handleCancel}>Cancel</button>
+            <button type="button" onClick={this.handleCancel}>
+              Cancel
+            </button>
           </div>
           <div className="container">
             <Item

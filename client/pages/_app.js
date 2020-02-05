@@ -1,12 +1,12 @@
 import React from "react";
-import App, { Container } from "next/app";
+import App from "next/app";
 import Head from "next/head";
 import { createGlobalStyle } from "styled-components";
 
 import MetaMaskContext from "../addons/metamask";
 
 const GlobalStyle = createGlobalStyle`
-  
+
 `;
 
 export default class MyApp extends App {
@@ -23,7 +23,7 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props;
 
     return (
-      <Container>
+      <>
         <Head>
           <meta charSet="utf-8" />
           <title>Margarita</title>
@@ -55,7 +55,7 @@ export default class MyApp extends App {
           integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
           crossOrigin="anonymous"
         />
-      </Container>
+      </>
     );
   }
 }

@@ -32,8 +32,8 @@ module.exports = async function createDomains(globals) {
   // const PROMO_CODE = "PROMO_CODE";
 
   const SDK_DEV = {
-    baseURL: "https://sdk.staging.daisypayments.com/",
-    // baseURL: "http://localhost:8000",
+    // baseURL: "https://sdk.staging.daisypayments.com/",
+    baseURL: "http://localhost:8000",
     // baseURL: "http://167.172.238.224:8000",
   };
 
@@ -79,9 +79,10 @@ module.exports = async function createDomains(globals) {
   });
 
   router.get("/", view, async ctx => {
+    const { plans } = await subscriptionService.getData();
     await ctx.render({
       page: "index",
-      props: {},
+      props: { plans },
     });
   });
 

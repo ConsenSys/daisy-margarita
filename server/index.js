@@ -37,17 +37,17 @@ async function main() {
         {
           id: 1,
           name: "Record player",
-          price: [`249${"0".repeat(18)}`, "DAI"],
+          price: [`249`, "DAI"],
         },
         {
           id: 2,
           name: "Vinyl record",
-          price: [`19${"0".repeat(18)}`, "DAI"],
+          price: [`19`, "DAI"],
         },
         {
           id: 3,
           name: "Sleeve",
-          price: [`1${"0".repeat(18)}`, "DAI"],
+          price: [`1`, "DAI"],
         },
       ],
     })

@@ -8,8 +8,8 @@ import client from "../addons/client";
 import { withMetaMaskContext } from "../addons/metamask";
 
 const SDK_DEV = {
-  baseURL: "https://sdk.staging.daisypayments.com/",
-  // baseURL: "http://localhost:8000",
+  // baseURL: "https://sdk.staging.daisypayments.com/",
+  baseURL: "http://localhost:8000",
   // baseURL: "http://167.172.238.224:8000",
 };
 
@@ -74,9 +74,8 @@ class StoreCheckout extends PureComponent {
       withGlobals: { web3 },
     });
 
-    const token = daisy.loadToken(invoice);
     const transaction = await daisy
-      .prepareToken(token)
+      .with(invoice)
       .pay(invoice, { from: account });
     console.log(transaction);
     this.setState({ transaction });
@@ -89,7 +88,7 @@ class StoreCheckout extends PureComponent {
       },
       ...props
     } = this.props;
-    const { invoice, receipts, transaction } = this.state;
+    const { invoice, receipts, transaction, showMore } = this.state;
 
     return (
       <Page>
@@ -107,6 +106,7 @@ class StoreCheckout extends PureComponent {
                 <p>
                   Total: {total.toFixed(0)} {symbol}
                 </p>
+                <p>Status: {invoice["state"]}</p>
                 <button
                   className="btn btn-primary"
                   type="submit"
@@ -114,13 +114,20 @@ class StoreCheckout extends PureComponent {
                 >
                   Checkout
                 </button>
-                <p>Status: {invoice["state"]}</p>
                 <ul>
                   {receipts.map(r => (
                     <li key={r["id"]}>Receipt: {r["txHash"]}</li>
                   ))}
                 </ul>
-                <pre>{JSON.stringify(invoice, null, 2)}</pre>
+                <a
+                  href="#"
+                  onClick={() =>
+                    this.setState(state => ({ showMore: !state.showMore }))
+                  }
+                >
+                  Toggle more info
+                </a>
+                {showMore && <pre>{JSON.stringify(invoice, null, 2)}</pre>}
               </div>
             </div>
           </form>
