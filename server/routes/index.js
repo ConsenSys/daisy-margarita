@@ -99,6 +99,32 @@ module.exports = async function createDomains(globals) {
     });
   });
 
+  router.get("/store/checkout/success/", view, auth, async ctx => {
+    const order = db
+      .get("users")
+      .find(ctx.state.user)
+      .get("orders", [])
+      .find({ invoiceId: ctx.query["invoice_identifier"] })
+      .value();
+
+    if (!order) {
+      throw Boom.notFound("Order not found", ctx.query);
+    }
+
+    const invoice = await payments.getInvoice({
+      identifier: order["invoiceId"],
+    });
+
+    await ctx.render({
+      page: "StoreCheckoutSuccess",
+      props: {
+        order,
+        invoice,
+        identifier: config.get("daisyOTP.identifier"),
+      },
+    });
+  });
+
   router.get("/store/checkout/:id/", view, auth, async ctx => {
     const products = db.get("products").value();
     const order = db
@@ -260,24 +286,74 @@ module.exports = async function createDomains(globals) {
     });
   });
 
+  // POST /api/store/checkout/webhook/
+  router.post("/api/store/checkout/webhook/", api, async ctx => {
+    const data = ctx.request.body;
+    const digest = ctx.get("X-DAISY-SIGNATURE");
+
+    const isAuthentic = webhooks.verify({
+      digest,
+      message: data,
+      publicKey: dedent`
+        -----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsKNS406HVR0aeeEYb/5b
+        k+LqjqNQ9VNOV0vGf5JyVHN3WNmGp3GXaJJsdLVefl0ol4LgiPnF6VwPXMO55BLo
+        dlSc5bBye0A54X1cC6Wlmvn6eiBEzOmm3b4cLhAF2Vq79i1WkMM11ZkNWZbeCF3R
+        pkW6XXVEz1+zEKobqITCBzWsTmTwqndF3UAx68S5F5kuBys7yqkrgnOVjO+NUWYY
+        gWatpId/cr65Uzzmu1NwC8k9wW3AvU1igIoDCqy2/BjAJdhIopA9vq0tWEkB7m19
+        HGXaoR9r7RqJsa/ePu53jmTUsvPfkF9zoIjXuSXP5/Hy6HYcZ5Pn9xfwgAZjmBvr
+        swIDAQAB
+        -----END PUBLIC KEY-----
+      `,
+    });
+    if (!isAuthentic) {
+      throw Boom.forbidden("Not authentic");
+    }
+
+    const invoiceId = data["payload"]["identifier"];
+
+    db.get("users")
+      // .find(ctx.state.user)
+      .first()
+      .get("orders", [])
+      .find({ invoiceId })
+      .assign({
+        confirmed: "YES VIA WEBHOOK",
+      })
+      .write();
+
+    ctx.body = "success";
+  });
+
   // POST /api/store/checkout/
   router.post("/api/store/checkout/", api, auth, async ctx => {
     const cart = ctx.request.body["cart"];
     const products = db.get("products").value();
     const [sum, symbol] = calculatePrice(products, cart);
 
-    const invoice = await payments.createInvoice({
-      invoicedPrice: sum, // required
-      // invoicedEmail: user.email, // optional
-      // invoicedName: user.name, // optional
-      // invoicedDetail: "Access to premium episode #16", // optional
-    });
-
     const order = db
       .get("users")
       .find(ctx.state.user)
       .get("orders", [])
-      .insert({ cart, total: [sum, symbol], invoiceId: invoice["identifier"] })
+      .insert({ cart, total: [sum, symbol], invoiceId: null, confirmed: false })
+      .write();
+
+    const invoice = await payments.createInvoice({
+      invoicedPrice: sum, // required
+      // invoicedEmail: user.email, // optional
+      invoicedName: ctx.state.user.name, // optional
+      invoicedDetail: `Checkout from ${process.env.MY_HOST} at ${new Date()}`,
+      redirectURL: `${process.env.MY_HOST}/store/checkout/success/`,
+      cancelURL: `${process.env.MY_HOST}/store/checkout/${order["id"]}/`,
+    });
+
+    db.get("users")
+      .find(ctx.state.user)
+      .get("orders", [])
+      .find(order)
+      .assign({
+        invoiceId: invoice["identifier"],
+      })
       .write();
 
     ctx.body = { order };
