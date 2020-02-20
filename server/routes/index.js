@@ -15,13 +15,17 @@ const {
 } = require("../middlewares/errors");
 
 function calculatePrice(products, cart) {
+  // const items = [];
   const token = "DAI";
   let total = 0;
   // eslint-disable-next-line no-unused-vars
-  for (const [id, amount] of Object.entries(cart)) {
+  for (const [id, quantity] of Object.entries(cart)) {
     const product = products.find(p => String(p["id"]) === String(id));
     const [price] = product["price"];
-    total += Number(price) * Number(amount || 0);
+    total += Number(price) * Number(quantity || 0);
+    // if (Number(quantity || 0) > 0) {
+    //   items.push(product);
+    // }
   }
   return [total, token];
 }
@@ -296,13 +300,13 @@ module.exports = async function createDomains(globals) {
       message: data,
       publicKey: dedent`
         -----BEGIN PUBLIC KEY-----
-        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsKNS406HVR0aeeEYb/5b
-        k+LqjqNQ9VNOV0vGf5JyVHN3WNmGp3GXaJJsdLVefl0ol4LgiPnF6VwPXMO55BLo
-        dlSc5bBye0A54X1cC6Wlmvn6eiBEzOmm3b4cLhAF2Vq79i1WkMM11ZkNWZbeCF3R
-        pkW6XXVEz1+zEKobqITCBzWsTmTwqndF3UAx68S5F5kuBys7yqkrgnOVjO+NUWYY
-        gWatpId/cr65Uzzmu1NwC8k9wW3AvU1igIoDCqy2/BjAJdhIopA9vq0tWEkB7m19
-        HGXaoR9r7RqJsa/ePu53jmTUsvPfkF9zoIjXuSXP5/Hy6HYcZ5Pn9xfwgAZjmBvr
-        swIDAQAB
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8Bs4flCwzob2h/sLUFfc
+        LyLJbiLnsTKH3S2BD8yswzIAwI4dB44+B3KSl++TE6Yxsa7SxGLI/P6flhb7nAl6
+        IPMsWxvspfJ2nUB4wp0UFCGX88LmCEdljKjUl1qq0H8lDf+hrVUq9neOGUg5BBvp
+        z6Gxom7Xn03toOO00BOV+UzSsLq8asXrTRa6VPSeufEpAsjdlvtzEUitVR5LvUhW
+        f/nIjgBHKqiuN/+Jcn1EaZgonP0BvcLTy4I/dRMdEkNB1TvcbABLWN+6/Y6vysxK
+        HAuSO+HAxxaP98wEHwFVuZRtmMZmXsQBVUIp7krSS2P1/ZZpUvThjt3pXQdtLSJq
+        CwIDAQAB
         -----END PUBLIC KEY-----
       `,
     });
@@ -338,13 +342,22 @@ module.exports = async function createDomains(globals) {
       .insert({ cart, total: [sum, symbol], invoiceId: null, confirmed: false })
       .write();
 
+    const ZERO = ""; // "0"
     const invoice = await payments.createInvoice({
-      invoicedPrice: sum, // required
-      // invoicedEmail: user.email, // optional
-      invoicedName: ctx.state.user.name, // optional
+      invoicedPrice: `${sum}${ZERO.repeat(18)}`,
+      invoicedName: ctx.state.user.name,
       invoicedDetail: `Checkout from ${process.env.MY_HOST} at ${new Date()}`,
       redirectURL: `${process.env.MY_HOST}/store/checkout/success/`,
       cancelURL: `${process.env.MY_HOST}/store/checkout/${order["id"]}/`,
+      items: Object.entries(cart).map(([id, quantity]) => {
+        const product = products.find(p => String(p.id) === String(id));
+        return {
+          sku: product.id,
+          description: product.name,
+          quantity: Number(quantity),
+          amount: `${product.price[0]}${ZERO.repeat(18)}`, // [1] is the token
+        };
+      }),
     });
 
     db.get("users")
