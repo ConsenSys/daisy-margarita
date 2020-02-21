@@ -4,21 +4,21 @@ import { withSSR } from "koa-nextjs/react";
 import Head from "next/head";
 
 import { Page } from "../components";
-import { withMetaMaskContext } from "../addons/metamask";
 
 class StoreCheckoutWithPaymentModule extends PureComponent {
   static propTypes = {
     invoice: PropTypes.any.isRequired,
-    metamask: PropTypes.object.isRequired,
   };
 
   render() {
     const { invoice } = this.props;
 
+    // <script> would usually include async but https://github.com/zeit/next.js/issues/9070
     return (
       <>
         <Head>
           <script async src="http://127.0.0.1:8080/module.js" />
+          <link rel="stylesheet" href="http://127.0.0.1:8080/module.css" />
         </Head>
         <Page>
           <Page.Navbar {...this.props} />
@@ -38,12 +38,7 @@ class StoreCheckoutWithPaymentModule extends PureComponent {
                   <p>Status: {invoice["state"]}</p>
                 </div>
                 <div className="col col-xs-6">
-                  <a
-                    href="http://0.0.0.0:5000/p/_1xYbKjI"
-                    id="daisy-payments-module-button"
-                  >
-                    Daisy
-                  </a>
+                  <div id="daisy-payment-module" data-invoice="_1xYbKjI" />
                 </div>
               </div>
             </div>
@@ -54,4 +49,4 @@ class StoreCheckoutWithPaymentModule extends PureComponent {
   }
 }
 
-export default withSSR()(withMetaMaskContext(StoreCheckoutWithPaymentModule));
+export default withSSR()(StoreCheckoutWithPaymentModule);
