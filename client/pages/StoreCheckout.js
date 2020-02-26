@@ -4,8 +4,6 @@ import { withSSR } from "koa-nextjs/react";
 
 import { Page } from "../components";
 
-import { withMetaMaskContext } from "../addons/metamask";
-
 function StoreCheckout({
   invoice,
   order: {

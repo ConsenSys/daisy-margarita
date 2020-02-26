@@ -14,6 +14,7 @@ export function useInterval(callback, delay) {
   }, [callback]);
 
   // Set up the interval.
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     function tick() {
       savedCallback.current();
@@ -26,11 +27,7 @@ export function useInterval(callback, delay) {
   }, [delay]);
 }
 
-function StoreCheckoutSuccess({
-  invoice: defaultInvoice,
-  order: defaultOrder,
-  ...props
-}) {
+function StoreCheckoutSuccess({ invoice: defaultInvoice, order: defaultOrder, ...props }) {
   const [invoice, invoiceSet] = useState(defaultInvoice);
   const [order, orderSet] = useState(defaultOrder);
   const [showMore, showMoreSet] = useState(false);

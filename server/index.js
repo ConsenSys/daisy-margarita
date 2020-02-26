@@ -13,9 +13,7 @@ const createClient = require("./client-create");
 const createApp = require("./app");
 
 async function main() {
-  const pkg = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf-8"),
-  );
+  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf-8"));
 
   const adapter = new FileSync("db.json");
   const db = low(adapter);

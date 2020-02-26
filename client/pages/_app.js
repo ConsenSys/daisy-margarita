@@ -35,10 +35,10 @@ export default class MyApp extends App {
           />
         </Head>
         <MetaMaskContext.Provider immediate>
-          <React.Fragment>
+          <>
             <GlobalStyle />
             <Component {...pageProps} />
-          </React.Fragment>
+          </>
         </MetaMaskContext.Provider>
         <script
           src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

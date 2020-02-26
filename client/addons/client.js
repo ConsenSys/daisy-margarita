@@ -64,11 +64,9 @@ export class Client {
     return this.axios.post(...args);
   }
 
-  signup = async credentials =>
-    this.axios.post("/session/api/signup/", credentials);
+  signup = async credentials => this.axios.post("/session/api/signup/", credentials);
 
-  authenticate = async credentials =>
-    this.axios.post("/session/api/login/", credentials);
+  authenticate = async credentials => this.axios.post("/session/api/login/", credentials);
 }
 
 export default new Client();

@@ -142,7 +142,7 @@ class Subscribe extends Component {
     this.polling = setInterval(this.handlePolling, 3000);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const {
       metamask: { web3 },
       subscription: { receipt },
@@ -169,13 +169,11 @@ class Subscribe extends Component {
       withGlobals: { web3 },
     });
 
-    const { signature, agreement } = await daisy
-      .with(this.props.plan)
-      .signCancel({
-        account,
-        onChainId: this.state.daisy["onChainId"],
-        signatureExpiresAt: Number.MAX_SAFE_INTEGER,
-      });
+    const { signature, agreement } = await daisy.with(this.props.plan).signCancel({
+      account,
+      onChainId: this.state.daisy["onChainId"],
+      signatureExpiresAt: Number.MAX_SAFE_INTEGER,
+    });
 
     const data = await daisy.submitCancel({ agreement, signature });
     console.log(data);
@@ -216,9 +214,7 @@ class Subscribe extends Component {
 
     const daisy = new DaisySDK(this.props.manager, web3, SDK_DEV);
 
-    this.eventemitter = daisy
-      .with(this.props.plan)
-      .approve(amount, { from: address });
+    this.eventemitter = daisy.with(this.props.plan).approve(amount, { from: address });
 
     this.eventemitter
       .on("transactionHash", this.handleApprove_transactionHash)
@@ -242,10 +238,7 @@ class Subscribe extends Component {
     this.setState(state => ({
       steps: update(state.steps, 0, step => ({
         ...step,
-        status:
-          confirmationNumber >= CONFIRMATIONS
-            ? STATUS.SUCCESS
-            : STATUS.PROCESSING,
+        status: confirmationNumber >= CONFIRMATIONS ? STATUS.SUCCESS : STATUS.PROCESSING,
         confirmationNumber,
         receipt,
         error: null,
@@ -353,9 +346,7 @@ class Subscribe extends Component {
           <div className="container">
             <h1>
               Subscribe to <em>{plan["name"]}</em>
-              {plan["private"] && (
-                <span className="badge badge-secondary">Enterprise</span>
-              )}
+              {plan["private"] && <span className="badge badge-secondary">Enterprise</span>}
             </h1>
             <p className="lead">
               Subscription bill id: <code>{subscription["id"]}</code>
@@ -372,16 +363,12 @@ class Subscribe extends Component {
             </button>
           </div>
           <div className="container">
-            <Item
-              className="card mb-3"
-              disabled={steps[0].status === STATUS.SUCCESS}
-            >
+            <Item className="card mb-3" disabled={steps[0].status === STATUS.SUCCESS}>
               <div className="card-body">
                 <StatusBadge status={steps[0].status} />
                 <h5 className="card-title">Approval</h5>
                 <p className="card-text">
-                  Send a transaction to the ERC20 contract to allow us to
-                  receive tokens.
+                  Send a transaction to the ERC20 contract to allow us to receive tokens.
                 </p>
                 <form
                   onSubmit={e => {
@@ -397,14 +384,11 @@ class Subscribe extends Component {
                         value={this.state.amount}
                         className="form-control"
                         id="amount"
-                        onChange={e =>
-                          this.setState({ amount: e.target.value })
-                        }
+                        onChange={e => this.setState({ amount: e.target.value })}
                         placeholder="Amount of tokens to approve"
                       />
                       <small className="form-text text-muted">
-                        Use MetaMask to select the account you want to use to
-                        pay
+                        Use MetaMask to select the account you want to use to pay
                       </small>
                     </div>
                     {plan["private"] && (
@@ -423,8 +407,7 @@ class Subscribe extends Component {
                           placeholder="PROMO_CODE"
                         />
                         <small className="form-text text-muted">
-                          Contact our sales teams to get the access code for
-                          this enterprise plan.
+                          Contact our sales teams to get the access code for this enterprise plan.
                         </small>
                       </div>
                     )}
@@ -441,8 +424,7 @@ class Subscribe extends Component {
                         readOnly
                       />
                       <small className="form-text text-muted">
-                        Use MetaMask to select the account you want to use to
-                        pay
+                        Use MetaMask to select the account you want to use to pay
                       </small>
                     </div>
                     <div className="form-group col-md-6">
@@ -462,27 +444,20 @@ class Subscribe extends Component {
                   </div>
 
                   <p>
-                    <strong>
-                      At any moment you still have absolute control of your
-                      tokens
-                    </strong>{" "}
-                    and you only going to be charged at the beginning of each
-                    period.
+                    <strong>At any moment you still have absolute control of your tokens</strong>{" "}
+                    and you only going to be charged at the beginning of each period.
                   </p>
 
                   <button
                     style={{ backgroundColor: "#E67C19" }}
                     type="submit"
-                    disabled={Boolean(
-                      !web3 || error || steps[0].status !== STATUS.NOT_STARTED,
-                    )}
+                    disabled={Boolean(!web3 || error || steps[0].status !== STATUS.NOT_STARTED)}
                     className={`btn btn-primary ${(!web3 ||
                       error ||
                       steps[0].status !== STATUS.NOT_STARTED) &&
                       "disabled"}`}
                   >
-                    {steps[0].status === STATUS.NOT_STARTED &&
-                      "Approve with MetaMask"}
+                    {steps[0].status === STATUS.NOT_STARTED && "Approve with MetaMask"}
                     {steps[0].status === STATUS.PROCESSING &&
                       steps[0].confirmationNumber === 0 &&
                       `Processing...`}
@@ -492,9 +467,7 @@ class Subscribe extends Component {
                     {steps[0].status === STATUS.SUCCESS && "Success!"}
                   </button>
                 </form>
-                {steps[0].receipt && (
-                  <pre>{JSON.stringify(steps[0].receipt, null, 2)}</pre>
-                )}
+                {steps[0].receipt && <pre>{JSON.stringify(steps[0].receipt, null, 2)}</pre>}
                 <p className="card-text">
                   <small className="text-muted">
                     {`This will consume some gas, but we promise it's gonna be
@@ -505,10 +478,7 @@ class Subscribe extends Component {
             </Item>
             <Item
               className="card mb-3"
-              disabled={
-                steps[0].status !== STATUS.SUCCESS ||
-                steps[1].status === STATUS.SUCCESS
-              }
+              disabled={steps[0].status !== STATUS.SUCCESS || steps[1].status === STATUS.SUCCESS}
             >
               <div className="card-body">
                 <StatusBadge status={steps[1].status} />
@@ -542,20 +512,15 @@ class Subscribe extends Component {
 
                   <button
                     type="submit"
-                    disabled={Boolean(
-                      !web3 || steps[1].status !== STATUS.NOT_STARTED,
-                    )}
+                    disabled={Boolean(!web3 || steps[1].status !== STATUS.NOT_STARTED)}
                     className={`btn btn-primary ${(!web3 ||
                       steps[1].status !== STATUS.NOT_STARTED) &&
                       "disabled"}`}
                   >
-                    {steps[1].status !== STATUS.SUCCESS &&
-                      "Sign agreement & submit"}
+                    {steps[1].status !== STATUS.SUCCESS && "Sign agreement & submit"}
                     {steps[1].status === STATUS.SUCCESS && "Success!"}
                   </button>
-                  {steps[1].signature && (
-                    <pre>{JSON.stringify(steps[1].signature, null, 2)}</pre>
-                  )}
+                  {steps[1].signature && <pre>{JSON.stringify(steps[1].signature, null, 2)}</pre>}
                   <p className="card-text">
                     <small className="text-muted">No gas involved!</small>
                   </p>

@@ -17,12 +17,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "@daisypayments/daisy-sdk": "^0.9.0",
-    "@daisypayments/petals": "^0.1.48",
+    "@daisypayments/daisy-sdk": "^0.10.0",
+    "@daisypayments/petals": "^0.2.0",
     "@daisypayments/react-metamask": "^0.4.1",
-    "axios": "^0.19.0",
+    "axios": "^0.19.2",
     "boom": "^7.2.2",
-    "config": "^3.2.4",
+    "config": "^3.2.6",
     "dedent": "^0.7.0",
     "dotenv": "^8.2.0",
     "koa": "^2.11.0",
@@ -53,7 +53,7 @@
     "youch": "^2.0.10"
   },
   "devDependencies": {
-    "@daisypayments/eslint-config": "^1.6.3",
+    "@daisypayments/eslint-config": "^2.1.1",
     "babel-plugin-styled-components": "^1.10.0",
     "eslint": "^6.8.0",
     "nodemon": "^2.0.2"

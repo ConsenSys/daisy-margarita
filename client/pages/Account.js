@@ -4,8 +4,6 @@ import { withSSR } from "koa-nextjs/react";
 import { Page } from "../components";
 
 class Account extends PureComponent {
-  state = {};
-
   static defaultProps = {
     subscriptions: [],
   };
@@ -21,11 +19,7 @@ class Account extends PureComponent {
             <h1>Account</h1>
             <p className="lead">Subscriptions</p>
             {subscriptions.length === 0 ? (
-              <a
-                className="btn btn-primary btn-lg"
-                href="/subscriptions/new?plan=p1"
-                role="button"
-              >
+              <a className="btn btn-primary btn-lg" href="/subscriptions/new?plan=p1" role="button">
                 Get the most popular plan
               </a>
             ) : (
@@ -40,13 +34,11 @@ class Account extends PureComponent {
                       <h5 className="mb-1">
                         bill: <code>{sub["id"]}</code>
                       </h5>
-                      <small style={{ textTransform: "uppercase" }}>
-                        {sub["status"]}
-                      </small>
+                      <small style={{ textTransform: "uppercase" }}>{sub["status"]}</small>
                     </div>
                     <p className="mb-1">
-                      Donec id elit non mi porta gravida at eget metus. Maecenas
-                      sed diam eget risus varius blandit.
+                      Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
+                      varius blandit.
                     </p>
                     <small>{sub["expiration"]}</small>
                   </a>

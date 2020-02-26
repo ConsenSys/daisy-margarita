@@ -19,12 +19,12 @@ function calculatePrice(products, cart) {
 }
 
 class Store extends PureComponent {
-  state = {
-    cart: {},
-  };
-
   static propTypes = {
     products: PropTypes.array.isRequired,
+  };
+
+  state = {
+    cart: {},
   };
 
   handleChange = (product, { target: { value } }) => {
@@ -88,11 +88,7 @@ class Store extends PureComponent {
                 <p>
                   Total: {total.toFixed(0)} {symbol}
                 </p>
-                <button
-                  className="btn btn-primary"
-                  type="submit"
-                  disabled={total <= 0.01}
-                >
+                <button className="btn btn-primary" type="submit" disabled={total <= 0.01}>
                   Checkout
                 </button>
               </div>

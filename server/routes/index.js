@@ -62,10 +62,7 @@ module.exports = async function createDomains(globals) {
   const router = new Router();
 
   const view = compose([unhandledErrors(globals), handledErrors(globals)]);
-  const api = compose([
-    unhandledJSONErrors(globals),
-    handledJSONErrors(globals),
-  ]);
+  const api = compose([unhandledJSONErrors(globals), handledJSONErrors(globals)]);
 
   const auth = (ctx, next) => {
     if (!ctx.state.user) {
@@ -342,9 +339,9 @@ module.exports = async function createDomains(globals) {
       .insert({ cart, total: [sum, symbol], invoiceId: null, confirmed: false })
       .write();
 
-    const ZERO = ""; // "0"
+    const decimals = "".repeat(18); // "10^18"
     const invoice = await payments.createInvoice({
-      invoicedPrice: `${sum}${ZERO.repeat(18)}`,
+      invoicedPrice: `${sum}${decimals}`,
       invoicedName: ctx.state.user.name,
       invoicedDetail: `Checkout from ${process.env.MY_HOST} at ${new Date()}`,
       redirectURL: `${process.env.MY_HOST}/store/checkout/success/`,
@@ -354,8 +351,12 @@ module.exports = async function createDomains(globals) {
         return {
           sku: product.id,
           description: product.name,
-          quantity: Number(quantity),
-          amount: `${product.price[0]}${ZERO.repeat(18)}`, // [1] is the token
+          subtitle: "New Product",
+          image: {
+            URL: `${process.env.MY_HOST}/image.jpg`,
+          },
+          quantity: String(quantity),
+          amount: `${product.price[0]}${decimals}`, // [1] is the token
         };
       }),
     });

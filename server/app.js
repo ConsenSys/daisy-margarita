@@ -28,12 +28,7 @@ module.exports = async function createApp(globals) {
   // Add middlewares
   app.use(logger());
   app.use(helmet());
-  app.use(
-    mount(
-      "/public",
-      statics(config.get("statics.dir"), config.get("statics.options")),
-    ),
-  );
+  app.use(mount("/public", statics(config.get("statics.dir"), config.get("statics.options"))));
   app.use(bodyParser());
   app.use(session({ ...config.get("session") }, app));
 

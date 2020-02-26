@@ -1,7 +1,4 @@
-import {
-  createMetaMaskContext,
-  withMetaMask,
-} from "@daisypayments/react-metamask";
+import { createMetaMaskContext, withMetaMask } from "@daisypayments/react-metamask";
 
 const MetaMaskContext = createMetaMaskContext();
 
