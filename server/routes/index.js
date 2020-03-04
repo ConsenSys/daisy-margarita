@@ -133,17 +133,17 @@ module.exports = async function createDomains(globals) {
     //   .find({ id: ctx.params["id"] })
     //   .value();
 
-    const invoice = await payments.getInvoice({
-      identifier: "_1xYbKjI",
-    });
+    // const invoice = await payments.getInvoice({
+    //   identifier: "_1xYbKjI",
+    // });
 
     await ctx.render({
       page: "StoreCheckoutWithPaymentModule",
       props: {
         // products,
         // order,
-        invoice,
-        identifier: config.get("daisyOTP.identifier"),
+        // invoice,
+        // identifier: config.get("daisyOTP.identifier"),
       },
     });
   });
