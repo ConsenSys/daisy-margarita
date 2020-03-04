@@ -18,7 +18,6 @@ class StoreCheckoutWithPaymentModule extends PureComponent {
       <>
         <Head>
           <script async src="http://127.0.0.1:8080/module.js" />
-          <link rel="stylesheet" href="http://127.0.0.1:8080/module.css" />
         </Head>
         <Page>
           <Page.Navbar {...this.props} />
@@ -38,7 +37,11 @@ class StoreCheckoutWithPaymentModule extends PureComponent {
                   <p>Status: {invoice["state"]}</p>
                 </div>
                 <div className="col col-xs-6">
-                  <div id="daisy-payment-module" data-invoice="_1xYbKjI" />
+                  <div
+                    id="daisy-payment-module"
+                    data-invoice="_1xYbKjI"
+                    data-environment="development"
+                  />
                 </div>
               </div>
             </div>
