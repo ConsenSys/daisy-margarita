@@ -123,6 +123,31 @@ module.exports = async function createDomains(globals) {
     });
   });
 
+  // TODO: Take an :id query param and get an order so this works the same as /store/checkout/:id/
+  router.get("/store/module_checkout/", view, auth, async ctx => {
+    // const products = db.get("products").value();
+    // const order = db
+    //   .get("users")
+    //   .find(ctx.state.user)
+    //   .get("orders", [])
+    //   .find({ id: ctx.params["id"] })
+    //   .value();
+
+    // const invoice = await payments.getInvoice({
+    //   identifier: "_1xYbKjI",
+    // });
+
+    await ctx.render({
+      page: "StoreCheckoutWithPaymentModule",
+      props: {
+        // products,
+        // order,
+        // invoice,
+        // identifier: config.get("daisyOTP.identifier"),
+      },
+    });
+  });
+
   router.get("/api/store/checkout/:id/", api, auth, async ctx => {
     const order = db
       .get("users")
